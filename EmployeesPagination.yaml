@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: Employee Management API
+  description: API for managing employee data with pagination support.
+  version: 1.0.0
+security:
+- security_profile: []
+paths:
+  /employees:
+    get:
+      summary: Retrieve all employees with pagination
+      description: Returns a paginated list of employees
+      parameters:
+      - name: limit
+        in: query
+        description: Number of employees to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 1
+          type: integer
+          default: 10
+      - name: offset
+        in: query
+        description: Number of employees to skip
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: A list of employees
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 10
+                  offset:
+                    type: integer
+                    example: 0
+                  total:
+                    type: integer
+                    example: 1000
+                  employees:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 600
+                        first_name:
+                          type: string
+                          example: Amye
+                        last_name:
+                          type: string
+                          example: Rhule
+                        email:
+                          type: string
+                          format: email
+                          example: arhule2n@4shared.com
+                        gender:
+                          type: string
+                          example: Female
+                        job_title:
+                          type: string
+                          example: Software Consultant
+                        state:
+                          type: string
+                          example: California
+                        city:
+                          type: string
+                          example: Sacramento
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      security:
+      - apikey: []
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 600
+        first_name:
+          type: string
+          example: Amye
+        last_name:
+          type: string
+          example: Rhule
+        email:
+          type: string
+          format: email
+          example: arhule2n@4shared.com
+        gender:
+          type: string
+          example: Female
+        job_title:
+          type: string
+          example: Software Consultant
+        state:
+          type: string
+          example: California
+        city:
+          type: string
+          example: Sacramento
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Invalid request
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Invalid request
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Invalid request
+    Unauthorized:
+      description: API key is missing or invalid
+      headers:
+        WWW-Authenticate:
+          style: simple
+          explode: false
+          schema:
+            type: string
+    Forbidden:
+      description: Forbidden
+  securitySchemes:
+    apikey:
+      type: apiKey
+      name: x-api-key
+      in: header
